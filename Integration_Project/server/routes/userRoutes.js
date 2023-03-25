@@ -11,7 +11,7 @@ router.post('/register', userController.signup);
 router.post('/login', userController.login);
 
 // API endpoint for fetching all users (only accessible by admin users)
-// router.get('/', authMiddleware, adminMiddleware, userController.getAllUsers);
+router.get('', authMiddleware, userController.getAllUsers);
 
 // API endpoint for fetching a single user by id
 router.get('/:id', userController.getUserById);

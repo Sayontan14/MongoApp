@@ -74,16 +74,33 @@ exports.login = async (req, res, next) => {
   }
 };
 
-exports.getUserStatus = async (req, res, next) => {
-  const userId = req.userId;
+exports.getUserById = async (req, res, next) => {
+  const userId = req.params.id;
   try {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId, {password: 0});
     if (!user) {
       const error = new Error('User not found');
       error.statusCode = 404;
       throw error;
     }
-    res.status(200).json({ status: user.status });
+    res.status(200).json(user);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getAllUsers = async (req, res, next) => {
+  try {
+    const user = await User.find({}, {password: 0});
+    if (!user) {
+      const error = new Error('User not found');
+      error.statusCode = 404;
+      throw error;
+    }
+    res.status(200).json(user);
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

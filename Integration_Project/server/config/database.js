@@ -1,11 +1,16 @@
 const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
+// mongoose.Promise = global.Promise;
 
-mongoose.connect('mongodb+srv://saptashwachakra2:Fnoh3EnzKgIpQM5u@cluster0.dpwjcuv.mongodb.net/recruitment?retryWrites=true&w=majority', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(() => console.log('Database connected successfully'))
-  .catch(err => console.log('Error connecting to database: ', err));
+exports.start = () => {
+  const mongooseConnectionString = getMongooseConnectionString();
+  mongoose.connect(mongooseConnectionString, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  const db = mongoose.connection;
+  db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+}
 
-module.exports = mongoose;
+getMongooseConnectionString = () => {
+  return `${process.env.DATABASE_TYPE}+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}/${process.env.MANGO_SCHEMA_NAME}`
+}

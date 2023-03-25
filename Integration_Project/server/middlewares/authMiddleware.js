@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { User } = require('../models/users');
+const  User  = require('../models/users');
 const { Jobseeker } = require('../models/jobseekers');
 const { Recruiter } = require('../models/recruiters');
 const { Employer } = require('../models/employers');
@@ -8,18 +8,20 @@ const authMiddleware = async (req, res, next) => {
   try {
     const token = req.header('Authorization').replace('Bearer ', '');
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decodedToken._id;
+    const userId = decodedToken.userId;
     const user = await User.findById(userId);
 
     if (!user) {
       throw new Error();
     }
+    console.log(user);
 
-    if (user.userRole === 'SuperAdmin') {
+    if (user.userRole.superAdmin) {
       // SuperAdmin has full access
       req.user = user;
       next();
-    } else if (user.userRole === 'Admin') {
+    }
+    else if (user.userRole.admin) {
       // Admin has access to everything except adding/deleting SuperAdmin users
       req.user = user;
       if (req.method === 'POST' && req.path === '/users' && req.body.userRole === 'SuperAdmin') {
@@ -109,6 +111,8 @@ const authMiddleware = async (req, res, next) => {
       {
       res.status(401).send({ error: 'Not authorized to access this resource' });
     }
-}catch (error){}
+    next();
+  }catch (error){}
+}    
 
-module.exports = authMiddleware;}    
+module.exports = authMiddleware;

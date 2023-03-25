@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   doj: { type: Date },
   email: { type: String, required: true, unique: true },
   username: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String, required: true},
   location: { type: String },
   contactNumber: { type: String, required: true },
   profilePhoto: { type: String },
